@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artwork Studio – Sign, Frame & Export</title>
+<meta name="description" content="Sign your artwork with a handwritten signature, add a passepartout mat, and export in Instagram, Facebook, LinkedIn and Pinterest formats. Free tool for artists.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@400;700&family=Caveat:wght@400;700&family=Sacramento&family=Great+Vibes&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fcf9f3;--earth:#5d4a3e;--earth-light:#8a6f61;
+  --cream:#f1ede4;--cream-dark:#e8e0d3;--white:#fff;
+  --text:#3a2e28;--muted:#9b887e;--border:#e8e0d3;
+  --r-lg:20px;--r-md:10px;--r-sm:6px;
+  --sh:0 2px 12px rgba(93,74,62,.09);--sh-lg:0 4px 24px rgba(93,74,62,.12)
+}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+.app{max-width:1160px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* Header */
+.app-header{text-align:center;margin-bottom:1.75rem}
+.app-header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.4rem);font-weight:300;color:var(--earth);letter-spacing:.02em;margin-bottom:.25rem}
+.app-header p{font-size:13px;color:var(--muted);font-weight:300;letter-spacing:.04em}
+.hdr-div{width:40px;height:1px;background:var(--cream-dark);margin:.65rem auto}
+
+/* Layout */
+.workspace{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:820px){.workspace{grid-template-columns:282px 1fr;align-items:start;gap:1.25rem}}
+
+/* Controls */
+.ctrl-panel{display:flex;flex-direction:column;gap:.6rem}
+.ctrl-section{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+.ctrl-head{width:100%;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;background:none;border:none;cursor:pointer;font-family:inherit;font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left}
+.ctrl-head .chev{font-size:11px;color:var(--muted);transition:transform .2s;line-height:1;display:inline-block}
+.ctrl-section.open .chev{transform:rotate(180deg)}
+.ctrl-body{padding:0 1rem 1rem;display:none}
+.ctrl-section.open .ctrl-body{display:block}
+
+/* Fields */
+.fg{margin-bottom:.8rem}.fg:last-child{margin-bottom:0}
+.fl{display:block;font-size:10.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem}
+.ti{width:100%;padding:.45rem .65rem;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+.ti:focus{border-color:var(--earth-light);background:var(--white)}
+.ti::placeholder{color:var(--muted)}
+.ti.flex{flex:1}
+
+/* Font grid */
+.font-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.font-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:5px 3px 4px;cursor:pointer;text-align:center;transition:all .15s;line-height:1}
+.font-card:hover{border-color:var(--earth-light)}
+.font-card.active{border-color:var(--earth);background:var(--cream)}
+.fp{display:block;font-size:22px;color:var(--earth);line-height:1.2;height:28px;overflow:hidden}
+.fn{display:block;font-size:9px;color:var(--muted);font-family:'DM Sans',sans-serif;margin-top:2px;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Position grid */
+.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;max-width:114px}
+.pos-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);height:28px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pos-btn:hover{border-color:var(--earth-light)}
+.pos-btn.active{border-color:var(--earth);background:var(--cream);color:var(--earth)}
+
+/* Color swatches */
+.color-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.csw{width:22px;height:22px;border-radius:50%;cursor:pointer;transition:transform .15s,box-shadow .15s;flex-shrink:0;border:2px solid transparent}
+.csw:hover{transform:scale(1.12)}
+.csw.active{box-shadow:0 0 0 2px var(--white),0 0 0 4px var(--earth);transform:scale(1.05)}
+.cpick{width:22px;height:22px;border-radius:50%;cursor:pointer;border:1.5px solid var(--border);padding:1px;background:none;overflow:hidden;flex-shrink:0}
+.auto-btn{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--muted);font-family:'DM Sans',sans-serif;vertical-align:middle;margin-left:4px;transition:all .15s}
+.auto-btn:hover{border-color:var(--earth);color:var(--earth)}
+
+/* Sliders */
+.slider-row{display:grid;grid-template-columns:52px 1fr 34px;align-items:center;gap:8px;margin-bottom:5px}
+.slider-row:last-child{margin-bottom:0}
+.slider-row .fl{margin-bottom:0;font-size:10px}
+input[type=range]{-webkit-appearance:none;height:3px;border-radius:2px;background:var(--cream-dark);outline:none;cursor:pointer;width:100%}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--earth);cursor:pointer;border:2px solid var(--white);box-shadow:0 1px 3px rgba(93,74,62,.3)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--earth);cursor:pointer;border:2px solid var(--white)}
+.rv{font-size:11px;color:var(--earth);font-weight:500;text-align:right}
+
+/* Toggle switch */
+.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem}
+.tswitch{position:relative;width:32px;height:17px;flex-shrink:0;cursor:pointer}
+.tswitch input{opacity:0;width:0;height:0}
+.tthumb{position:absolute;inset:0;background:var(--cream-dark);border-radius:9px;cursor:pointer;transition:background .2s}
+.tthumb::after{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:white;top:3px;left:3px;transition:transform .2s}
+.tswitch input:checked+.tthumb{background:var(--earth)}
+.tswitch input:checked+.tthumb::after{transform:translateX(15px)}
+
+/* Meta rows */
+.meta-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.meta-row:last-child{margin-bottom:0}
+.opt-tag{font-size:9px;background:var(--cream);color:var(--muted);padding:1px 6px;border-radius:10px;vertical-align:middle;margin-left:4px;text-transform:none;letter-spacing:0;font-weight:400}
+
+/* Pill toggle */
+.pill-tog{display:flex;gap:3px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:3px}
+.pill-btn{flex:1;padding:4px 6px;border-radius:4px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.pill-btn.active{background:var(--earth);color:white}
+
+/* Export buttons */
+.exp-formats{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.exp-btn{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);transition:all .15s}
+.exp-btn:hover:not(:disabled){border-color:var(--earth-light);color:var(--earth)}
+.exp-btn:disabled{opacity:.38;cursor:not-allowed}
+.exp-dims{font-size:10px;color:var(--muted)}
+.btn-primary{width:100%;padding:.65rem 1rem;border-radius:var(--r-md);border:none;background:var(--earth);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.04em;transition:background .15s,transform .1s}
+.btn-primary:hover{background:var(--earth-light)}
+.btn-primary:active{transform:scale(.99)}
+.btn-primary:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.link-btn{background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--earth-light);text-decoration:underline;padding:0}
+.link-btn:hover{color:var(--earth)}
+
+/* Upload */
+.upload-zone{border:1.5px dashed var(--cream-dark);border-radius:var(--r-md);padding:1.25rem 1rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.45rem;cursor:pointer;background:var(--bg);transition:border-color .15s,background .15s}
+.upload-zone:hover,.upload-zone.dov{border-color:var(--earth-light);background:rgba(255,255,255,.6)}
+.upload-zone p{font-size:13px;color:var(--muted)}
+.upload-zone p strong{color:var(--earth)}
+.upload-hint{font-size:11px!important}
+.upload-icon{width:34px;height:34px;background:var(--cream);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.upload-compact{display:flex;align-items:center;justify-content:space-between;padding:.35rem 0}
+.upload-cname{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+
+/* Preview panel */
+.preview-panel{display:flex;flex-direction:column;gap:.75rem}
+
+/* Format tabs */
+.fmt-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.fmt-tabs::-webkit-scrollbar{display:none}
+.fmt-tab{flex-shrink:0;padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.fmt-tab:hover{border-color:var(--earth-light);color:var(--earth)}
+.fmt-tab.active{border-color:var(--earth);background:var(--cream);color:var(--earth);font-weight:500}
+
+/* Canvas area */
+.canvas-wrap{position:relative;background:var(--cream);border-radius:var(--r-lg);padding:1rem;box-shadow:var(--sh-lg);display:flex;align-items:center;justify-content:center;min-height:280px}
+#cv{display:block;border-radius:3px;cursor:grab;max-width:100%;height:auto}
+#cv:active{cursor:grabbing}
+.drag-hint{position:absolute;bottom:1.1rem;left:50%;transform:translateX(-50%);background:rgba(93,74,62,.72);color:white;font-size:11px;padding:4px 13px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
+.drag-hint.vis{opacity:1}
+.canvas-footer{display:flex;align-items:center;justify-content:space-between;padding:0 .25rem}
+.canvas-footer span{font-size:12px;color:var(--muted)}
+
+.hidden{display:none!important}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fi{animation:fi .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <h1>Artwork Studio</h1>
+    <div class="hdr-div"></div>
+    <p>Sign, frame and export your artwork for every platform</p>
+  </header>
+
+  <div class="workspace">
+
+    <!-- Controls panel -->
+    <aside class="ctrl-panel">
+
+      <!-- Artwork upload -->
+      <div class="ctrl-section open" id="sec-upload">
+        <div class="ctrl-head" style="cursor:default"><span>Artwork</span></div>
+        <div class="ctrl-body" style="display:block">
+          <div class="upload-compact hidden" id="uploadCompact">
+            <span class="upload-cname" id="uploadName">—</span>
+            <button class="link-btn" id="changeBtn">Change</button>
+          </div>
+          <div class="upload-zone" id="uploadZone">
+            <div class="upload-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5d4a3e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <p><strong>Drop artwork here</strong><br>or click to browse</p>
+            <p class="upload-hint">JPG · PNG · WEBP · GIF</p>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hidden">
+        </div>
+      </div>
+
+      <!-- Signature -->
+      <div class="ctrl-section open" id="sec-sig">
+        <button class="ctrl-head" data-t="sig-body"><span>Signature</span><span class="chev">▾</span></button>
+        <div class="ctrl-body" id="sig-body">
+
+          <div class="fg">
+            <label class="fl">Handwriting style</label>
+            <div class="font-grid" id="fontGrid"></div>
+          </div>
+
+          <div class="fg">
+            <label class="fl" for="sigName">Your name</label>
+            <input type="text" id="sigName" class="ti" placeholder="e.g. Jane Smith" autocomplete="off">
+          </div>
+
+          <div class="fg">
+            <div class="tog-row">
+              <label class="fl" style="margin-bottom:0">Website URL</label>
+              <label class="tswitch"><input type="checkbox" id="showUrl"><span class="tthumb"></span></label>
+            </div>
+            <input type="text" id="sigUrl" class="ti hidden" placeholder="yourwebsite.com" style="margin-top:5px">
+          </div>
+
+          <div class="fg">
+            <label class="fl">Position</label>
+            <div class="pos-grid" id="posGrid">
+              <button class="pos-btn" data-pos="tl" title="Top left">&#8598;</button>
+              <button class="pos-btn" data-pos="tc" title="Top center">&#8593;</button>
+              <button class="pos-btn" data-pos="tr" title="Top right">&#8599;</button>
+              <button class="pos-btn" data-pos="bl" title="Bottom left">&#8601;</button>
+              <button class="pos-btn" data-pos="bc" title="Bottom center">&#8595;</button>
+              <button class="pos-btn active" data-pos="br" title="Bottom right">&#8600;</button>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label class="fl">Colour <button class="auto-btn" id="autoBtn">Auto-detect</button></label>
+            <div class="color-row" id="sigColorRow">
+              <div class="csw active" data-c="#ffffff" style="background:#fff;border:1px solid #ddd" title="White"></div>
+              <div class="csw" data-c="#1a1a1a" style="background:#1a1a1a" title="Black"></div>
+              <div class="csw" data-c="#d4af6a" style="background:#d4af6a" title="Gold"></div>
+              <div class="csw" data-c="#c8b9a5" style="background:#c8b9a5" title="Sand"></div>
+              <div class="csw" data-c="#e8e0d3" style="background:#e8e0d3;border:1px solid #ddd" title="Cream"></div>
+              <input type="color" id="sigColorPick" value="#ffffff" class="cpick" title="Custom">
+            </div>
+          </div>
+
+          <div class="fg">
+            <div class="slider-row">
+              <label class="fl">Size</label>
+              <input type="range" id="sigSize" min="18" max="96" value="48" step="2">
+              <span class="rv" id="sigSizeV">48</span>
+            </div>
+            <div class="slider-row">
+              <label class="fl">Opacity</label>
+              <input type="range" id="sigOp" min="20" max="100" value="100" step="5">
+              <span class="rv" id="sigOpV">100%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Metadata (optional) -->
+      <div class="ctrl-section" id="sec-meta">
+        <button class="ctrl-head" data-t="meta-body">
+          <span>Metadata <span class="opt-tag">optional</span></span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="ctrl-body" id="meta-body">
+          <div class="meta-row">
+            <label class="tswitch"><input type="checkbox" id="showTitle"><span class="tthumb"></span></label>
+            <input type="text" id="metaTitle" class="ti flex" placeholder="Artwork title">
+          </div>
+          <div class="meta-row">
+            <label class="tswitch"><input type="checkbox" id="showYear"><span class="tthumb"></span></label>
+            <input type="text" id="metaYear" class="ti flex" placeholder="Year" style="max-width:90px">
+          </div>
+          <div class="meta-row">
+            <label class="tswitch"><input type="checkbox" id="showEdition"><span class="tthumb"></span></label>
+            <input type="text" id="metaEdition" class="ti flex" placeholder="Edition (e.g. 1/10, AP)">
+          </div>
+          <div class="meta-row">
+            <label class="tswitch"><input type="checkbox" id="showMedium"><span class="tthumb"></span></label>
+            <input type="text" id="metaMedium" class="ti flex" placeholder="Medium (e.g. Oil on canvas)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Mat -->
+      <div class="ctrl-section open" id="sec-mat">
+        <button class="ctrl-head" data-t="mat-body"><span>Mat (Passepartout)</span><span class="chev">▾</span></button>
+        <div class="ctrl-body" id="mat-body">
+          <div class="fg">
+            <label class="fl">Mat colour</label>
+            <div class="color-row" id="matColorRow">
+              <div class="csw active" data-m="#f9f6f0" style="background:#f9f6f0;border:1px solid #ddd" title="Warm white"></div>
+              <div class="csw" data-m="#ffffff" style="background:#fff;border:1px solid #ddd" title="Pure white"></div>
+              <div class="csw" data-m="#1a1a1a" style="background:#1a1a1a" title="Black"></div>
+              <div class="csw" data-m="#c8b9a5" style="background:#c8b9a5" title="Linen"></div>
+              <div class="csw" data-m="#3d5a4c" style="background:#3d5a4c" title="Forest"></div>
+              <div class="csw" data-m="#5a4a6b" style="background:#5a4a6b" title="Plum"></div>
+              <input type="color" id="matColorPick" value="#f9f6f0" class="cpick" title="Custom">
+            </div>
+          </div>
+          <div class="fg">
+            <div class="slider-row">
+              <label class="fl">Width</label>
+              <input type="range" id="matW" min="0" max="160" value="60" step="5">
+              <span class="rv" id="matWV">60</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="ctrl-section open" id="sec-exp">
+        <button class="ctrl-head" data-t="exp-body"><span>Export</span><span class="chev">▾</span></button>
+        <div class="ctrl-body" id="exp-body">
+
+          <div class="fg">
+            <label class="fl">Artwork fit</label>
+            <div class="pill-tog">
+              <button class="pill-btn active" id="fitBtn">Fit — full artwork</button>
+              <button class="pill-btn" id="fillBtn">Fill — crop to format</button>
+            </div>
+          </div>
+
+          <div class="fg">
+            <div class="tog-row">
+              <label class="fl" style="margin-bottom:0">Watermark (preview protection)</label>
+              <label class="tswitch"><input type="checkbox" id="wmTog"><span class="tthumb"></span></label>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label class="fl">Download single format</label>
+            <div class="exp-formats" id="expFormats"></div>
+          </div>
+
+          <button class="btn-primary" id="expAllBtn" disabled>&#8595; Export all formats as ZIP</button>
+
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Preview panel -->
+    <main class="preview-panel">
+      <div class="fmt-tabs" id="fmtTabs"></div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="cv"></canvas>
+        <div class="drag-hint" id="dragHint">&#8597; Drag to reposition</div>
+      </div>
+      <div class="canvas-footer">
+        <span id="fmtLabel"></span>
+        <button class="link-btn" id="resetBtn">Reset position</button>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+'use strict';
+
+const FORMATS = {
+  'ig-square':   {label:'Instagram Square',   w:1080,h:1080 },
+  'ig-portrait': {label:'Instagram Portrait', w:1080,h:1350 },
+  'ig-story':    {label:'Story & Reels',      w:1080,h:1920 },
+  'fb-linkedin': {label:'Facebook / LinkedIn',w:1200,h:630  },
+  'pinterest':   {label:'Pinterest',          w:1000,h:1500 },
+};
+
+const FONTS = [
+  {key:'Dancing Script', label:'Dancing'},
+  {key:'Caveat',         label:'Caveat'},
+  {key:'Sacramento',     label:'Sacra.'},
+  {key:'Great Vibes',    label:'G.Vibes'},
+  {key:'Satisfy',        label:'Satisfy'},
+];
+
+const SK = 'artwork-studio-v1';
+
+// ── State ───────────────────────────────────────────────────────────────────
+let IMG = null;
+let pScale = 1;
+let drag = false, dragLast = {x:0,y:0}, draggedOnce = false;
+
+const offsets = {};
+Object.keys(FORMATS).forEach(k => offsets[k] = {x:0,y:0});
+
+const S = {
+  fmt:'ig-square',
+  name:'', font:'Dancing Script', pos:'br',
+  color:'#ffffff', size:48, opacity:100,
+  showUrl:false, url:'',
+  showTitle:false, title:'',
+  showYear:false,  year:String(new Date().getFullYear()),
+  showEdition:false, edition:'',
+  showMedium:false, medium:'',
+  matColor:'#f9f6f0', mat:60,
+  fill:false, wm:false,
+};
+
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+// ── Build UI ────────────────────────────────────────────────────────────────
+
+function buildTabs() {
+  const el = document.getElementById('fmtTabs');
+  el.innerHTML = '';
+  Object.entries(FORMATS).forEach(([k,f]) => {
+    const b = document.createElement('button');
+    b.className = 'fmt-tab' + (k === S.fmt ? ' active' : '');
+    b.dataset.fmt = k;
+    b.textContent = f.label;
+    b.addEventListener('click', () => {
+      S.fmt = k;
+      document.querySelectorAll('.fmt-tab').forEach(t => t.classList.toggle('active', t.dataset.fmt === k));
+      document.getElementById('fmtLabel').textContent = `${f.label} · ${f.w} × ${f.h} px`;
+      updateCanvasSize(); render();
+    });
+    el.appendChild(b);
+  });
+  const f = FORMATS[S.fmt];
+  document.getElementById('fmtLabel').textContent = `${f.label} · ${f.w} × ${f.h} px`;
+}
+
+function buildFontGrid() {
+  const grid = document.getElementById('fontGrid');
+  grid.innerHTML = '';
+  const raw = S.name.trim();
+  const parts = raw.split(/\s+/);
+  const preview = raw ? (parts.length > 1 ? (parts[0][0]||'') + (parts[parts.length-1][0]||'') : raw.substring(0,3)) : 'Aa';
+  FONTS.forEach(f => {
+    const b = document.createElement('button');
+    b.className = 'font-card' + (S.font === f.key ? ' active' : '');
+    b.dataset.font = f.key;
+    b.innerHTML = `<span class="fp" style="font-family:'${f.key}',cursive">${preview}</span><span class="fn">${f.label}</span>`;
+    b.addEventListener('click', () => {
+      S.font = f.key; save(); buildFontGrid(); render();
+    });
+    grid.appendChild(b);
+  });
+}
+
+function buildExpButtons() {
+  const el = document.getElementById('expFormats');
+  el.innerHTML = '';
+  Object.entries(FORMATS).forEach(([k,f]) => {
+    const b = document.createElement('button');
+    b.className = 'exp-btn'; b.id = 'exp-'+k; b.disabled = true;
+    b.innerHTML = `<span>${f.label}</span><span class="exp-dims">${f.w}×${f.h}</span>`;
+    b.addEventListener('click', () => dlFormat(k));
+    el.appendChild(b);
+  });
+}
+
+// ── Canvas sizing ────────────────────────────────────────────────────────────
+
+function updateCanvasSize() {
+  const wrap = document.getElementById('canvasWrap');
+  const maxW = wrap.clientWidth - 32;
+  const maxH = Math.min(window.innerHeight * 0.72, 580);
+  const fmt = FORMATS[S.fmt];
+  const ratio = fmt.w / fmt.h;
+  let w, h;
+  if (maxW / ratio <= maxH) { w = maxW; h = Math.round(maxW / ratio); }
+  else { h = Math.round(maxH); w = Math.round(maxH * ratio); }
+  cv.width = Math.max(w, 1); cv.height = Math.max(h, 1);
+  cv.style.width = cv.width + 'px'; cv.style.height = cv.height + 'px';
+  pScale = cv.width / fmt.w;
+}
+
+// ── Core render ──────────────────────────────────────────────────────────────
+
+function renderTo(c, W, H, fk, sc) {
+  const x = c.getContext('2d');
+  x.clearRect(0, 0, W, H);
+
+  // Background
+  x.fillStyle = S.matColor;
+  x.fillRect(0, 0, W, H);
+
+  if (!IMG) {
+    x.fillStyle = 'rgba(155,136,126,.28)';
+    x.font = `300 ${Math.round(W * .022)}px 'DM Sans',sans-serif`;
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('Upload artwork to preview', W/2, H/2);
+    return;
+  }
+
+  const mp = S.mat * sc;
+  const off = offsets[fk];
+  const ox = off.x * sc, oy = off.y * sc;
+
+  if (!S.fill) {
+    // FIT MODE
+    const mxW = W - mp * 2, mxH = H - mp * 2;
+    if (mxW <= 0 || mxH <= 0) { x.drawImage(IMG, 0, 0, W, H); }
+    else {
+      const ir = IMG.width / IMG.height, br = mxW / mxH;
+      let iw, ih;
+      if (ir > br) { iw = mxW; ih = mxW / ir; }
+      else { ih = mxH; iw = mxH * ir; }
+      const cx = Math.max(mp, Math.min(W - mp - iw, (W - iw) / 2 + ox));
+      const cy = Math.max(mp, Math.min(H - mp - ih, (H - ih) / 2 + oy));
+      x.save();
+      x.shadowColor = 'rgba(0,0,0,.13)'; x.shadowBlur = 13 * sc; x.shadowOffsetY = 3 * sc;
+      x.drawImage(IMG, cx, cy, iw, ih);
+      x.restore();
+      // Top edge vignette
+      const v = x.createLinearGradient(cx, cy, cx, cy + ih * .06);
+      v.addColorStop(0, 'rgba(0,0,0,.05)'); v.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = v; x.fillRect(cx, cy, iw, ih * .06);
+    }
+  } else {
+    // FILL MODE
+    const ir = IMG.width / IMG.height, cr = W / H;
+    let iw, ih;
+    if (ir > cr) { ih = H; iw = H * ir; } else { iw = W; ih = W / ir; }
+    const cx = Math.max(W - iw, Math.min(0, (W - iw) / 2 + ox));
+    const cy = Math.max(H - ih, Math.min(0, (H - ih) / 2 + oy));
+    x.drawImage(IMG, cx, cy, iw, ih);
+    if (mp > 0) {
+      x.fillStyle = S.matColor;
+      x.fillRect(0, 0, W, mp);
+      x.fillRect(0, H - mp, W, mp);
+      x.fillRect(0, mp, mp, H - mp * 2);
+      x.fillRect(W - mp, mp, mp, H - mp * 2);
+    }
+  }
+
+  if (S.wm && S.name) drawWatermark(x, W, H, sc);
+  drawSig(x, W, H, sc);
+}
+
+function render() { renderTo(cv, cv.width, cv.height, S.fmt, pScale); }
+
+// ── Signature ───────────────────────────────────────────────────────────────
+
+function drawSig(x, W, H, sc) {
+  const hasAny = S.name || (S.showUrl && S.url) || hasMeta();
+  if (!hasAny) return;
+
+  const pad = 26 * sc;
+  const nSz = S.size * sc;
+  const uSz = nSz * .52;
+  const mSz = Math.max(8 * sc, nSz * .33);
+  const lh = 1.48;
+
+  const lines = [];
+  if (S.name) lines.push({t: S.name, sz: nSz, f: `400 ${nSz}px '${S.font}',cursive`});
+  if (S.showUrl && S.url) lines.push({t: S.url, sz: uSz, f: `300 ${uSz}px '${S.font}',cursive`});
+
+  const mp = [];
+  if (S.showTitle && S.title) mp.push(`\u201c${S.title}\u201d`);
+  if (S.showMedium && S.medium) mp.push(S.medium);
+  if (S.showYear && S.year) mp.push(S.year);
+  if (S.showEdition && S.edition) mp.push(S.edition);
+  if (mp.length) lines.push({t: mp.join('  \u00b7  '), sz: mSz, f: `300 ${mSz}px 'DM Sans',sans-serif`});
+
+  if (!lines.length) return;
+
+  const totalH = lines.reduce((s, l, i) => s + l.sz * (i < lines.length - 1 ? lh : 1), 0);
+
+  const isL = S.pos.endsWith('l'), isR = S.pos.endsWith('r'), isT = S.pos.startsWith('t');
+  const bx = isL ? pad : isR ? W - pad : W / 2;
+  const by = isT ? pad + lines[0].sz : H - pad - totalH + lines[0].sz;
+  const al = isL ? 'left' : isR ? 'right' : 'center';
+
+  x.save();
+  x.globalAlpha = S.opacity / 100;
+  x.textAlign = al; x.textBaseline = 'alphabetic';
+
+  let cy = by;
+  lines.forEach((line, i) => {
+    x.font = line.f;
+    x.shadowColor = 'rgba(0,0,0,.32)'; x.shadowBlur = 5 * sc; x.shadowOffsetX = x.shadowOffsetY = sc;
+    x.fillStyle = S.color;
+    x.fillText(line.t, bx, cy);
+    if (i < lines.length - 1) cy += line.sz * lh;
+  });
+  x.restore();
+}
+
+function hasMeta() {
+  return (S.showTitle && S.title) || (S.showYear && S.year) ||
+         (S.showEdition && S.edition) || (S.showMedium && S.medium);
+}
+
+// ── Watermark ────────────────────────────────────────────────────────────────
+
+function drawWatermark(x, W, H, sc) {
+  const name = S.name || '© Artist';
+  const sz = Math.round(W * .038);
+  x.save();
+  x.globalAlpha = .11;
+  x.fillStyle = '#ffffff';
+  x.font = `400 ${sz}px '${S.font}',cursive`;
+  x.textAlign = 'center';
+  x.translate(W/2, H/2); x.rotate(-Math.PI / 5);
+  const sx = W * .34, sy = sz * 3;
+  for (let px2 = -W; px2 < W * 1.5; px2 += sx)
+    for (let py2 = -H * 1.5; py2 < H * 1.5; py2 += sy)
+      x.fillText(name, px2, py2);
+  x.restore();
+}
+
+// ── Auto colour ──────────────────────────────────────────────────────────────
+
+function autoColor() {
+  if (!IMG) return;
+  const tmp = document.createElement('canvas');
+  tmp.width = cv.width; tmp.height = cv.height;
+  renderTo(tmp, cv.width, cv.height, S.fmt, pScale);
+  const tx = tmp.getContext('2d');
+  const pad = 26 * pScale, sz2 = Math.round(S.size * pScale * 2.5);
+  const W = cv.width, H = cv.height;
+  let sx = S.pos.endsWith('r') ? W - pad - sz2 : S.pos.endsWith('l') ? pad : W/2 - sz2/2;
+  let sy = S.pos.startsWith('t') ? pad : H - pad - sz2;
+  sx = Math.max(0, Math.min(W - sz2, sx)); sy = Math.max(0, Math.min(H - sz2, sy));
+  try {
+    const d = tx.getImageData(sx, sy, Math.max(sz2,1), Math.max(sz2,1)).data;
+    let b = 0;
+    for (let i = 0; i < d.length; i += 4) b += .299*d[i] + .587*d[i+1] + .114*d[i+2];
+    b /= d.length / 4;
+    S.color = b > 145 ? '#1a1a1a' : '#ffffff';
+    syncSigColors(S.color); render();
+  } catch(e){}
+}
+
+function syncSigColors(c) {
+  document.querySelectorAll('#sigColorRow .csw').forEach(s => s.classList.toggle('active', s.dataset.c === c));
+  document.getElementById('sigColorPick').value = c.length === 7 ? c : '#ffffff';
+}
+
+// ── Drag ─────────────────────────────────────────────────────────────────────
+
+function initDrag() {
+  function start(x, y) { if (!IMG) return; drag = true; dragLast = {x,y}; }
+  function move(x, y) {
+    if (!drag) return;
+    const dx = (x - dragLast.x) / pScale, dy = (y - dragLast.y) / pScale;
+    dragLast = {x,y};
+    offsets[S.fmt].x += dx; offsets[S.fmt].y += dy;
+    render();
+    if (!draggedOnce) { draggedOnce = true; document.getElementById('dragHint').classList.remove('vis'); }
+  }
+  function end() { drag = false; }
+
+  cv.addEventListener('mousedown', e => start(e.offsetX, e.offsetY));
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    const r = cv.getBoundingClientRect();
+    move(e.clientX - r.left, e.clientY - r.top);
+  });
+  window.addEventListener('mouseup', end);
+
+  cv.addEventListener('touchstart', e => {
+    const t = e.touches[0], r = cv.getBoundingClientRect();
+    start(t.clientX - r.left, t.clientY - r.top); e.preventDefault();
+  }, {passive:false});
+  cv.addEventListener('touchmove', e => {
+    const t = e.touches[0], r = cv.getBoundingClientRect();
+    move(t.clientX - r.left, t.clientY - r.top); e.preventDefault();
+  }, {passive:false});
+  cv.addEventListener('touchend', end);
+}
+
+// ── Load image ───────────────────────────────────────────────────────────────
+
+function loadFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  if (!reader) return;
+  reader.onload = e => {
+    if (!e?.target?.result) return;
+    const i = new Image();
+    i.onload = () => {
+      IMG = i;
+      Object.keys(offsets).forEach(k => offsets[k] = {x:0,y:0});
+      draggedOnce = false;
+      document.getElementById('uploadZone').classList.add('hidden');
+      document.getElementById('uploadCompact').classList.remove('hidden');
+      const n = file.name.length > 24 ? file.name.slice(0,21) + '…' : file.name;
+      document.getElementById('uploadName').textContent = n;
+      enableExp(true);
+      const dh = document.getElementById('dragHint');
+      dh.classList.add('vis');
+      setTimeout(() => dh.classList.remove('vis'), 3200);
+      updateCanvasSize(); render();
+    };
+    i.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function enableExp(on) {
+  document.querySelectorAll('.exp-btn').forEach(b => b.disabled = !on);
+  document.getElementById('expAllBtn').disabled = !on;
+}
+
+// ── Export ───────────────────────────────────────────────────────────────────
+
+async function ensureFonts() {
+  await document.fonts.ready;
+  try { await Promise.all(FONTS.map(f => document.fonts.load(`400 64px '${f.key}'`))); } catch(e){}
+}
+
+async function makeBlob(fk) {
+  const fmt = FORMATS[fk];
+  const c = document.createElement('canvas');
+  c.width = fmt.w; c.height = fmt.h;
+  renderTo(c, fmt.w, fmt.h, fk, 1);
+  return new Promise(res => c.toBlob(res, 'image/png'));
+}
+
+async function dlFormat(fk) {
+  await ensureFonts();
+  const blob = await makeBlob(fk);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const n = (S.name || 'artwork').replace(/\s+/g,'-').toLowerCase();
+  a.download = `${n}-${fk}.png`; a.href = url; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function expAll() {
+  const btn = document.getElementById('expAllBtn');
+  btn.textContent = 'Generating\u2026'; btn.disabled = true;
+  await ensureFonts();
+  const zip = new JSZip();
+  const n = (S.name || 'artwork').replace(/\s+/g,'-').toLowerCase();
+  for (const [k,f] of Object.entries(FORMATS)) {
+    const blob = await makeBlob(k);
+    zip.file(`${n}-${k}-${f.w}x${f.h}.png`, blob);
+  }
+  const content = await zip.generateAsync({type:'blob'});
+  const url = URL.createObjectURL(content);
+  const a = document.createElement('a');
+  a.download = `${n}-all-formats.zip`; a.href = url; a.click();
+  URL.revokeObjectURL(url);
+  btn.textContent = '\u2193 Export all formats as ZIP'; btn.disabled = false;
+}
+
+// ── Preset ───────────────────────────────────────────────────────────────────
+
+function save() {
+  try {
+    localStorage.setItem(SK, JSON.stringify({
+      name:S.name, font:S.font, pos:S.pos, color:S.color, size:S.size, opacity:S.opacity,
+      showUrl:S.showUrl, url:S.url, showTitle:S.showTitle, title:S.title,
+      showYear:S.showYear, year:S.year, showEdition:S.showEdition, edition:S.edition,
+      showMedium:S.showMedium, medium:S.medium, matColor:S.matColor, mat:S.mat,
+      fill:S.fill, wm:S.wm
+    }));
+  } catch(e){}
+}
+
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SK)||'null');
+    if (d) Object.assign(S, d);
+  } catch(e){}
+}
+
+function syncUI() {
+  const g = id => document.getElementById(id);
+  g('sigName').value = S.name;
+  g('sigUrl').value = S.url;
+  g('showUrl').checked = S.showUrl;
+  if (S.showUrl) g('sigUrl').classList.remove('hidden');
+  g('metaTitle').value = S.title;   g('showTitle').checked = S.showTitle;
+  g('metaYear').value = S.year;     g('showYear').checked = S.showYear;
+  g('metaEdition').value = S.edition; g('showEdition').checked = S.showEdition;
+  g('metaMedium').value = S.medium;  g('showMedium').checked = S.showMedium;
+  g('sigSize').value = S.size; g('sigSizeV').textContent = S.size;
+  g('sigOp').value = S.opacity; g('sigOpV').textContent = S.opacity + '%';
+  g('matW').value = S.mat; g('matWV').textContent = S.mat;
+  g('matColorPick').value = S.matColor;
+  g('sigColorPick').value = S.color.length === 7 ? S.color : '#ffffff';
+  g('wmTog').checked = S.wm;
+  g('fitBtn').classList.toggle('active', !S.fill);
+  g('fillBtn').classList.toggle('active', S.fill);
+  document.querySelectorAll('.pos-btn').forEach(b => b.classList.toggle('active', b.dataset.pos === S.pos));
+  syncSigColors(S.color);
+  // mat colour swatch
+  document.querySelectorAll('#matColorRow .csw').forEach(s => s.classList.toggle('active', s.dataset.m === S.matColor));
+  buildFontGrid();
+}
+
+// ── Events ───────────────────────────────────────────────────────────────────
+
+function initEvents() {
+  const g = id => document.getElementById(id);
+  const fi = g('fileInput'), uz = g('uploadZone');
+
+  uz.addEventListener('click', () => fi.click());
+  g('changeBtn').addEventListener('click', () => fi.click());
+  fi.addEventListener('change', function() { if (this.files?.[0]) { loadFile(this.files[0]); this.value=''; } });
+  uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('dov'); });
+  uz.addEventListener('dragleave', () => uz.classList.remove('dov'));
+  uz.addEventListener('drop', e => { e.preventDefault(); uz.classList.remove('dov'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+
+  g('sigName').addEventListener('input', function() { S.name = this.value; save(); buildFontGrid(); render(); });
+
+  g('showUrl').addEventListener('change', function() {
+    S.showUrl = this.checked; g('sigUrl').classList.toggle('hidden', !this.checked); save(); render();
+  });
+  g('sigUrl').addEventListener('input', function() { S.url = this.value; save(); render(); });
+
+  document.querySelectorAll('.pos-btn').forEach(b => {
+    b.addEventListener('click', function() {
+      S.pos = this.dataset.pos;
+      document.querySelectorAll('.pos-btn').forEach(x => x.classList.toggle('active', x.dataset.pos === S.pos));
+      save(); render();
+    });
+  });
+
+  document.querySelectorAll('#sigColorRow .csw').forEach(s => {
+    s.addEventListener('click', function() {
+      S.color = this.dataset.c; syncSigColors(S.color); g('sigColorPick').value = S.color.length===7?S.color:'#ffffff'; save(); render();
+    });
+  });
+  g('sigColorPick').addEventListener('input', function() {
+    S.color = this.value;
+    document.querySelectorAll('#sigColorRow .csw').forEach(s => s.classList.remove('active'));
+    save(); render();
+  });
+  g('autoBtn').addEventListener('click', autoColor);
+
+  g('sigSize').addEventListener('input', function() { S.size = +this.value; g('sigSizeV').textContent = this.value; save(); render(); });
+  g('sigOp').addEventListener('input', function() { S.opacity = +this.value; g('sigOpV').textContent = this.value+'%'; save(); render(); });
+
+  ['Title','Year','Edition','Medium'].forEach(f => {
+    g('show'+f).addEventListener('change', function() { S['show'+f] = this.checked; save(); render(); });
+    g('meta'+f).addEventListener('input', function() { S[f.toLowerCase()] = this.value; save(); render(); });
+  });
+
+  document.querySelectorAll('#matColorRow .csw').forEach(s => {
+    s.addEventListener('click', function() {
+      S.matColor = this.dataset.m;
+      document.querySelectorAll('#matColorRow .csw').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+      g('matColorPick').value = S.matColor; save(); render();
+    });
+  });
+  g('matColorPick').addEventListener('input', function() {
+    S.matColor = this.value;
+    document.querySelectorAll('#matColorRow .csw').forEach(s => s.classList.remove('active'));
+    save(); render();
+  });
+  g('matW').addEventListener('input', function() { S.mat = +this.value; g('matWV').textContent = this.value; save(); render(); });
+
+  g('fitBtn').addEventListener('click', () => { S.fill=false; g('fitBtn').classList.add('active'); g('fillBtn').classList.remove('active'); save(); render(); });
+  g('fillBtn').addEventListener('click', () => { S.fill=true; g('fillBtn').classList.add('active'); g('fitBtn').classList.remove('active'); save(); render(); });
+
+  g('wmTog').addEventListener('change', function() { S.wm = this.checked; save(); render(); });
+
+  // Accordion
+  document.querySelectorAll('.ctrl-head[data-t]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const body = g(this.dataset.t);
+      const sec = this.closest('.ctrl-section');
+      const open = sec.classList.toggle('open');
+      body.style.display = open ? 'block' : 'none';
+    });
+  });
+
+  g('resetBtn').addEventListener('click', () => { offsets[S.fmt] = {x:0,y:0}; render(); });
+  g('expAllBtn').addEventListener('click', expAll);
+
+  window.addEventListener('resize', () => {
+    clearTimeout(window._rt);
+    window._rt = setTimeout(() => { updateCanvasSize(); render(); }, 120);
+  });
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+async function init() {
+  load();
+  buildTabs();
+  buildFontGrid();
+  buildExpButtons();
+  syncUI();
+  initDrag();
+  initEvents();
+
+  // Open sections that have data-t and are marked open
+  document.querySelectorAll('.ctrl-section.open .ctrl-body').forEach(b => b.style.display = 'block');
+
+  updateCanvasSize();
+  await document.fonts.ready;
+  render();
+}
+
+init();
+</script>
+</body>
+</html>

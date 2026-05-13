@@ -241,6 +241,99 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
         padding: 8px 14px !important;
     }
 }
+    /* ==========================================================================
+       2. DEN NYA MOBILOPTIMERINGEN (SÄKRAD OCH TESTAD)
+       ========================================================================== */
+    @media (max-width: 900px) {
+        /* Bryt datorns sidleds-layout helt */
+        body {
+            flex-direction: column !important;
+            overflow-y: auto !important;
+            height: auto !important;
+        }
+
+        /* Lägg tavlan (Workspace) absolut högst upp på mobilskärmen */
+        .workspace {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            padding: 10px !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+            background-color: #1a0d08 !important;
+        }
+
+        /* Fixa formatknapparna så att de ligger i en rullningsbar rad */
+        .format-selector {
+            display: flex !important;
+            overflow-x: auto !important;
+            white-space: nowrap !important;
+            justify-content: flex-start !important;
+            padding: 5px 10px 15px 10px !important;
+            gap: 8px !important;
+            width: 100% !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .format-btn {
+            flex: 0 0 auto !important;
+            margin: 0 !important;
+        }
+
+        /* Begränsa tavelvisningens höjd på mobilskärmen */
+        .canvas-container {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 320px !important;
+            min-height: 250px !important;
+            padding: 10px 0 !important;
+        }
+
+        canvas {
+            max-width: 100% !important;
+            max-height: 320px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        /* Flytta ner menyraderna (Sidebar) till full bredd under bilden */
+        .sidebar {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            border-right: none !important;
+            border-top: 1px solid var(--border-color) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: visible !important;
+        }
+
+        /* Se till att flikarna ligger snyggt i en rad under varandra */
+        .tabs-container {
+            width: 100% !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
+        .tab-button {
+            padding: 12px 4px !important;
+            font-size: 13px !important;
+        }
+
+        .tab-content {
+            overflow-y: visible !important;
+            height: auto !important;
+            padding: 15px !important;
+        }
+
+        /* Gör alla inmatningsfält finger-vänliga */
+        input[type="text"], select, .btn-primary {
+            height: 48px !important;
+            font-size: 16px !important; /* Förhindrar att iOS zoomar in automatiskt vid klick */
+        }
+    }
 
   
 </style>

@@ -143,35 +143,106 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 .hidden{display:none!important}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .fi{animation:fi .3s ease}
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [{
-    "@type": "Question",
-    "name": "How do I choose the right color and opacity for my digital signature?",
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "Match the digital ink color to an existing dark tone within your piece. Lower the opacity using our slider until the lines blend naturally with the canvas texture for an authentic look."
+/* ==========================================================================
+   COMPLETE MOBILE RESPONSIVE UPGRADE (akvarellskiss.se/artists-signature)
+   ========================================================================== */
+@media (max-width: 900px) {
+    /* 1. Bryt upp flexbox-layouten till en vertikal stapel */
+    body {
+        flex-direction: column !important;
+        overflow-y: auto !important;
+        height: auto !important;
     }
-  }, {
-    "@type": "Question",
-    "name": "Which corner should an artist sign their work on?",
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "The traditional standard is the bottom-right corner. However, you can place your signature in the bottom-left corner if it creates better visual balance against the painting's composition."
-    }
-  }, {
-    "@type": "Question",
-    "name": "Does the multi-channel export tool compress my high-resolution art?",
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "No. Your high-resolution master file remains completely untouched. The tool generates separate cropped versions specifically formatted for individual social media platform requirements."
-    }
-  }]
-}
-</script>
 
+    /* 2. Förhandsvisningen (Workspace) läggs i topp så man ser vad man gör */
+    .workspace {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 10px !important;
+        position: sticky !important;
+        top: 0 !important;
+        background: #23120b !important; /* Matchar din bruna bakgrundsfärg exakt */
+        z-index: 1000 !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Tvinga din rörliga canvas-container att hålla sig inom skärmens kanter */
+    .canvas-container {
+        max-width: 100% !important;
+        max-height: 280px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+
+    canvas {
+        max-width: 100% !important;
+        max-height: 280px !important;
+        height: auto !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+
+    /* 3. Kontrollpanelen (Sidebar) flyttas ner under bilden */
+    .sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow-y: visible !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        margin-top: 10px !important;
+    }
+
+    /* 4. Lägg flikarna i ett smart 2x2 rutnät så texten inte klipps */
+    .tabs-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        margin-bottom: 15px !important;
+        width: 100% !important;
+    }
+
+    .tab-button {
+        width: 100% !important;
+        padding: 12px 6px !important;
+        font-size: 13px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    /* 5. Gör alla spakar, inmatningsfält och knappar stora och tum-vänliga */
+    .control-group, .slider-group {
+        margin-bottom: 15px !important;
+    }
+
+    input[type="text"], select, .btn-primary, button {
+        width: 100% !important;
+        height: 46px !important;
+        font-size: 15px !important;
+        box-sizing: border-box !important;
+        display: block !important;
+    }
+
+    /* Snygg fix för listan med formatknappar under canvasen */
+    .format-selector {
+        display: flex !important;
+        overflow-x: auto !important; /* Gör raden swipbar i sidled! */
+        white-space: nowrap !important;
+        gap: 8px !important;
+        padding: 5px 0 12px 0 !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .format-btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        padding: 8px 14px !important;
+    }
+}
+
+  
 </style>
 </head>
 <body>
